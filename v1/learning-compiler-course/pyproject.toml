@@ -1,0 +1,51 @@
+[build-system]
+requires = ["hatchling>=1.24.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "learning-compiler-course"
+version = "0.1.0"
+description = "A 6-lab, agentic-systems-first AI course codebase (Python 3.11)."
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+license = {file = "LICENSE"}
+authors = [{name = "Course Staff", email = "staff@example.edu"}]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0.0",
+  "mypy>=1.8.0",
+  "ruff>=0.6.0",
+  "types-setuptools",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["learning_compiler"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+fix = true
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "N", "SIM", "RUF"]
+ignore = [
+  "E501",  # line length handled by formatter / readability pragmatism
+]
+preview = true
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**.py" = ["D", "S101"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_configs = true
+show_error_codes = true
+pretty = true
+exclude = ["^docs/"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
