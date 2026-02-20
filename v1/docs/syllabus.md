@@ -1,184 +1,410 @@
-Here’s a 6‑meeting (6×1h) “AI-from-zero” curriculum for 2nd‑year undergrads who can code but are math‑shy, with **Agentic Systems as the spine** and “timeless foundations” as the vibe.
+Below is a **fully updated 6×1h syllabus** that implements the “one agent, six upgrades” approach, trims concept density per hour, and pushes the “adult invariants list” into **reading/appendix** while keeping three invariants **repeating every week**:
 
-The throughline is simple and ancient:
+1. **Budgets / stop rules**
+2. **Evidence / run journal (replayability)**
+3. **Tool boundaries (“model proposes; system disposes”)**
 
-> **An AI system is an agent that repeatedly**
-> **observes → decides → acts → verifies → stops**
-> under uncertainty and resource limits. 
+It’s still **Agentic Systems as the spine**, still “timeless foundations,” just paced so you’re not forced to teach a semester’s worth of prerequisites in week 1.
 
-And the modern 2026 twist (still timeless) is also simple:
+---
 
+# Course: AI From Zero (Agentic Systems Spine) — 6×1h Labs
+
+## Audience and assumptions
+
+* 2nd‑year undergraduates
+* Strong programmers (data structures, basic debugging)
+* Weak math prep (we avoid calculus; probability is discrete and table-based)
+* No prior AI background
+
+## Course throughline (the one idea that keeps paying rent)
+
+> **An AI system is an agent loop:** observe → decide → act → verify → stop
+> under uncertainty and resource limits.
 > **The model is a component, not the system.**
-> A real agent is **Behavior + Reliability + Evaluation**. 
+> A robust agent is **Behavior + Reliability + Evaluation**.
+
+This follows the **Russell/Norvig agent view**: an agent maps percept history to actions, and “rationality” means choosing actions that best achieve goals given what the agent knows and what it wants.
+
+### Where GenAI/LLMs fit (2026 orientation)
+
+GenAI models (including LLMs) are powerful, but in this course they are treated as **components inside the agent loop**, not the definition of AI. Concretely, they can help with **proposing** plans, interpreting messy observations, or translating intent into structured actions—but the system must still enforce budgets, boundaries, and verification:
+
+* **Model proposes; system disposes** (permissions, allowlists, contracts live outside the model)
+* Outputs are **observations/proposals**, not truth-by-default
+* Success is defined by **specs + evidence**, not fluency
+
+### Running project: **CourierBot**
+
+A small Python agent that navigates a **campus grid** and uses **simulated tools** (functions that can fail, have side effects, and return messy outputs). Each meeting adds one capability, while keeping the same agent skeleton.
+
+* **World**: grid map with walls, destinations, optional hazards
+* **Actions**: move N/S/E/W, scan, ask_clarification, use_tool(name, args)
+* **Tools (simulated)**: `door_unlock()`, `lookup_map()`, `report_delivery()` — can fail, timeout, or return malformed data
+* **Artifacts produced every week**:
+
+  * a **run journal** (structured log with stable IDs)
+  * a **stop rule** (explicit budget: steps, time, tool calls)
+  * a **verification step** (“did the intended effect happen?”)
 
 ---
 
-## The 6‑meeting curriculum
+# Learning outcomes (T‑shaped)
 
-### Meeting 1 — The Big Map: What “AI” actually is (Agentic Systems anatomy)
+## Depth (agentic core)
 
-**Goal:** Give students a mental model that survives hype cycles.
+By the end, students can:
 
-**Scope**
+* Implement an **agent loop** with explicit **state, intent, actions, observations, evidence**
+* Add **planning** (A* in a clean world)
+* Add **uncertainty handling** (simple Bayesian belief update + ask/act)
+* Treat ML as **one way to obtain behavior** (a learned policy component)
+* Engineer **reliability boundaries** (validation, retries, idempotency, journaling)
+* Build an **evaluation harness** (offline tests + adversarial cases + regression gate)
 
-* **Russell/Norvig agent view:** agent = mapping from percept history to actions; rationality as “doing the right thing given what you know and what you want.”
-* The **Agentic Systems anatomy**:
-  **Behavior** (how it decides), **Reliability** (how it keeps working), **Evaluation** (how you know it’s good). 
-* The **six canonical objects** that make agents debuggable and non-magical:
-  **Intent, State, Plan, Action, Observation, Evidence**. 
-* The “adult” invariants (non-negotiables) that separate demos from systems:
-  budgets/stop rules, mediation of side effects, effect typing, reproducibility, trust discipline, measurability, operability. 
-* Why the 2026 world cares: autonomy without these invariants becomes a haunted house with a credit card.
+## Breadth (orientation map)
 
-**Why here?**
-Because it prevents the most common beginner error: treating AI as “a model that outputs answers” instead of “a decision-making loop embedded in software.” This one hour shapes how they interpret *everything* later.
+Students can explain, at a high level:
 
----
-
-### Meeting 2 — Behavior I: Search & Planning (how agents decide in clean worlds)
-
-**Goal:** Teach “decision = structured computation,” not vibes.
-
-**Scope**
-
-* Problem formulation: state space, actions, transition model, goal test, path cost.
-* Core algorithms (math-light, code-first intuition):
-  BFS/DFS, Uniform Cost Search, **A***, heuristics as “useful lies with guarantees.”
-* Plans vs policies: **a plan is a sequence; a policy is a rule for what to do next**.
-* Task decomposition as a planning skill: turning vague goals into **checkable subgoals** (so verification becomes possible). 
-* Stopping rules: “when are we done?” as an explicit design choice, not a feeling. 
-
-**Why this is foundational (and timeless):**
-Search is the “assembly language” of agency. Even when a neural model proposes steps, the *structure* of reasoning is still search/planning over a space of possibilities.
+* How search, probability, supervised learning, and RL relate to **policies**
+* Why reliable agents are mostly **systems engineering + evaluation discipline**
+* What changes fast (frameworks/prompts) vs slow (state machines, contracts, evidence, evaluation)
 
 ---
 
-### Meeting 3 — Behavior II: Uncertainty, Beliefs, and Asking Questions (agents in messy worlds)
+# Format and assessment
 
-**Goal:** Make uncertainty a first-class citizen—because real agents live in fog.
+**6 laboratory meetings × 1 hour** (explanation + guided implementation + run traces).
 
-**Scope**
+Suggested lightweight assessment (works even if you grade pass/fail):
 
-* Probability as **bookkeeping for uncertainty** (no calculus; discrete examples).
-* Bayes rule as an *update operator*: prior → evidence → posterior.
-* Markov idea + belief state intuition: when you can’t see the full state, you maintain a belief about it (POMDP intuition, no heavy formalism).
-* **Clarify vs act** as a decision problem:
-  Ask a question when uncertainty is high *and* the cost of being wrong is high; otherwise take safe information‑gathering actions. 
-* “Tools for facts, models for transformation” + **trust discipline**: treat tool outputs and retrieved text as **observations**, not truth-by-default. 
-* A sneak preview of adversarial reality: indirect prompt injection is just “hostile observations pretending to be commands.” 
-
-**Why here (before ML)?**
-Because most ML courses accidentally teach students to be overconfident. Agency requires calibrated uncertainty handling: when to query, when to verify, when to abstain.
+* Weekly checkpoint: submit code + one run journal + one paragraph “what failed / what I changed”
+* Final submission: CourierBot + offline eval suite + short spec (success criteria + budgets + constraints)
 
 ---
 
-### Meeting 4 — Learning for Agents: How policies get acquired (without drowning in math)
+# Companion “book” (Markdown) structure
 
-**Goal:** Put ML/DL in the right mental box: **learning is one way to get behavior**, not the definition of AI.
+Each meeting has a short chapter in **formal academic tone** with:
 
-**Scope**
+* definitions of terms (glossary box)
+* Mermaid diagrams
+* one worked example (step-by-step trace)
+* one real-world analogy
+* one small exercise
 
-* Three ways to get behavior:
-
-  1. hand-designed rules/search,
-  2. learned predictors (supervised learning),
-  3. learned decision-making (reinforcement learning).
-* Supervised learning in one sentence: learn a function that generalizes beyond the training set; failure modes: overfitting, dataset shift, spurious correlations.
-* Reinforcement learning as “learning a policy from reward”:
-
-  * MDP intuition: states, actions, rewards, transitions
-  * Value functions (what’s good long-term), exploration vs exploitation
-* The key conceptual bridge:
-  **Planning = compute actions using a model of the world.**
-  **RL = learn actions (or values) from experience.**
-* Why deep learning matters but is not the foundation: neural nets are flexible function approximators; the agent loop and evaluation discipline still rule your life.
-
-**Why this matters in 2026:**
-Students will see endless “just fine-tune it / just add a bigger model” talk. This session inoculates them: learning is powerful, but agency is broader—and often fails for reasons *outside* the model.
+(You can hand students the chapter before class; it reduces how much prerequisite explaining you must do live.)
 
 ---
 
-### Meeting 5 — Reliability: Turning behavior into software that doesn’t betray you
+# Meeting-by-meeting syllabus
 
-**Goal:** Teach the engineering physics of agents: failures, side effects, and safety boundaries.
+## Meeting 1 — The Agent Loop + Evidence (build the skeleton)
 
-**Scope**
+**Central question:** “What is an AI system when you strip away hype?”
 
-* **State machines/workflows**: make the loop explicit (states, transitions, guards, timeouts). 
-* Tool boundaries and contracts: schemas, validation, normalized error taxonomy. 
-* Reliability primitives that outlive frameworks:
+### Core concepts (in-class; keep it tight)
 
-  * timeouts, retries with backoff
-  * **idempotency** (the “don’t double-charge the user” spell) 
-  * circuit breakers and safe degradation
-  * concurrency rules: parallelize reads, serialize writes 
-* Security boundaries (timeless, not “LLM-specific”):
+* Agent loop: **observe → decide → act → verify → stop**
+* The six objects (introduced *only* at the level needed to code them):
 
-  * least privilege, allowlists, deterministic policy enforcement outside the model 
-  * the mantra: **“the model proposes; the system disposes.”** 
-* Observability and evidence:
+  * **Intent** (goal + constraints)
+  * **State** (what the agent currently believes)
+  * **Plan** (optional placeholder this week)
+  * **Action**
+  * **Observation**
+  * **Evidence** (journal entries, tool receipts, assertions)
+* The three invariants (start using them immediately):
 
-  * run journal (black box recorder), stable IDs, replayability 
-  * why “we can’t reproduce it” is not an acceptable ending
+  * **budget / stop rule**
+  * **run journal**
+  * **tool boundary** (even if “tool” is just a Python function)
 
-**Why it’s in an AI course at all:**
-Because the AI boom is increasingly about **agents with tools**. If students only learn “models,” they’ll build impressive failures. Reliability is how agency touches reality without causing expensive folklore.
+### In-class arc (60 minutes)
 
----
+* 0–5: mental map + what the agent loop is
+* 5–20: implement the minimal loop + data structures for state and journal
+* 20–45: run CourierBot in a deterministic tiny map (no uncertainty yet)
+* 45–60: “verification” step + stop rule + inspect a run journal together
 
-### Meeting 6 — Evaluation: The scientific method for AI systems (how you stay honest)
+### Hands-on deliverable
 
-**Goal:** Make evaluation feel like *part of the system*, not an afterthought.
+* `agent.py`: a loop that can reach a destination with *hardcoded* behavior
+* `journal.jsonl`: each step logs observation/action/result with stable run_id
 
-**Scope**
+### Companion book chapter (pre/post)
 
-* Specs as the root of evaluation: define success criteria + constraints + budgets. 
-* Three evaluation modes:
+* “Agentic Systems 101: Loop, Evidence, Budgets”
+* Mermaid (used in reading and optionally shown in class):
 
-  * **in-run verification** (did the tool action actually happen?)
-  * **offline eval** (fixed suites + regression gates)
-  * **online monitoring** (SLIs/SLOs, drift, incident response) 
-* Scoring methods: rule checks first; humans for subjective; model-judges only when calibrated. 
-* Stochasticity hygiene: repeated trials, variance, tail risk; the “rule of three” intuition for rare bad events. 
-* Adversarial evals: injection attempts, tool poisoning, permission probes as test cases, not “security later.” 
-* Close with the “stay-sane map”:
+```mermaid
+flowchart LR
+  O[Observe] --> D[Decide]
+  D --> A[Act]
+  A --> V[Verify]
+  V --> S{Stop?}
+  S -- no --> O
+  S -- yes --> End[Return result + evidence]
+```
 
-  * fast-changing: prompts/framework APIs
-  * slow-changing: state machines, idempotency, observability, evaluation discipline 
-
-**Why this is the finale:**
-Because evaluation is what turns AI into an engineering discipline instead of a performance art. It also gives students a compass for the next few years of hype: *“show me the spec and the eval.”*
-
----
-
-## Why these six, in this order
-
-1. **Agents first** so everything has a home.
-   Search, probability, learning, and even deep nets become *tools for building policies* rather than disconnected topics.
-
-2. **Behavior before Learning** because agency is about decision structure.
-   Many students (and many companies) learn ML first and then try to duct-tape it into an agent. That’s backwards.
-
-3. **Uncertainty early** because it trains intellectual honesty.
-   The best agents aren’t the most confident—they’re the most evidence-driven and well-calibrated.
-
-4. **Reliability + Evaluation are treated as core AI**, not “ops stuff.”
-   In 2026, autonomy + tool use makes reliability and evaluation non-optional. The principles here outlive today’s models and libraries. 
-
-5. **Math-light by design, but not concept-light.**
-   Every session can be taught with discrete examples, simulation thinking, and pseudocode. Students who later want the math can “attach” it naturally:
-
-   * Search → complexity/optimality proofs (optional depth)
-   * Beliefs → formal probability/graphical models
-   * RL → Bellman equations and function approximation theory
+**Terms introduced (limit):** agent loop, state, observation, action, evidence, budget/stop rule.
 
 ---
 
-## What students should walk away believing (the “mind-shaping” part)
+## Meeting 2 — Planning Upgrade (A* in a clean world)
 
-* AI is not synonymous with deep learning. AI is **goal-directed behavior under constraints**.
-* A model can suggest; only a system can safely act. 
-* If you can’t specify “good,” you can’t improve anything—only change it.
-* The future belongs to builders who can connect **behavior + reliability + evaluation** into one coherent loop. 
+**Central question:** “How can an agent decide systematically instead of vibing?”
 
-That’s a six‑hour foundation that will still make sense to them in 2030, even if the 2026 toolchain fossils itself into museum exhibits.
+### Core concepts (in-class)
+
+* Problem formulation (only what you need to implement):
+
+  * states, actions, transitions, goal test, path cost
+* **BFS → A*** as the single narrative arc
+
+  * BFS finds shortest paths in unweighted graphs
+  * A* uses a heuristic to search efficiently while preserving optimality (intuition-level)
+* “Evidence” becomes: the **path** + why it’s believed correct
+
+### Explicit scope cuts
+
+* DFS, Uniform Cost Search: **reading only**
+* Proofs / complexity analysis: **optional enrichment**
+
+### In-class arc (60 minutes)
+
+* 0–8: state space as a graph (draw one tiny map)
+* 8–30: implement BFS (or provide starter BFS and trace it)
+* 30–50: upgrade to A* with Manhattan distance heuristic
+* 50–60: add a stop rule (node expansion budget) + journal the frontier size
+
+### Hands-on deliverable
+
+* `planner.py`: A* that returns a plan (sequence of moves)
+* Journal includes: cost, heuristic, chosen node (so plans become debuggable)
+
+### Companion book chapter
+
+* “Search as the Assembly Language of Agency”
+* Worked trace: A* on a 6×6 grid with 2 obstacles
+
+**Terms introduced (limit):** state space, frontier, heuristic, A*.
+
+---
+
+## Meeting 3 — Uncertainty Upgrade (beliefs + ask vs act)
+
+**Central question:** “What should an agent do when it can’t trust what it sees?”
+
+### Core concepts (in-class)
+
+* Probability as **bookkeeping for uncertainty** (tables, not calculus)
+* Bayes update as an operator: **prior → evidence → posterior**
+* Belief state (informal): keep a distribution over hypotheses when the world is partially observed
+* **Ask vs act** rule (decision intuition):
+
+  * ask when uncertainty is high **and** cost of being wrong is high
+  * otherwise take **safe information-gathering actions**
+* Tool outputs are **observations**, not truth-by-default (trust discipline)
+
+### Concrete implementation choice (keep it teachable)
+
+Add a **noisy scanner**:
+
+* `scan()` returns “door is locked” but is wrong 20% of the time
+* CourierBot maintains belief: `P(door_locked)` and chooses:
+
+  * ask for confirmation (costs a step/tool call), or
+  * try unlock (may waste time / trigger failure)
+
+### In-class arc (60 minutes)
+
+* 0–10: discrete probability tables + why base rates matter
+* 10–30: implement Bayes update function for one binary variable
+* 30–50: integrate into CourierBot decision: ask vs act
+* 50–60: journal belief over time + inspect one failure case
+
+### Companion book chapter
+
+* “Beliefs: How to Stay Honest in Fog”
+* Includes a worked Bayes table and a small “cost of error” scenario
+
+**Terms introduced (limit):** prior/posterior, Bayes update, belief state, uncertainty.
+
+---
+
+## Meeting 4 — Learning Upgrade (a learned policy as a component)
+
+**Central question:** “How can behavior be acquired from data—and why does it still fail?”
+
+### Core concepts (in-class)
+
+* Three ways to get behavior (framed as a systems choice):
+
+  1. hand-designed (rules/search),
+  2. learned predictors (supervised),
+  3. learned decision-making (RL) — **conceptual only**
+* Supervised learning in one operational sentence:
+
+  * learn a mapping `state → action` that generalizes beyond training examples
+* Failure modes (must be felt, not merely named):
+
+  * overfitting (memorization)
+  * dataset shift (training ≠ deployment)
+
+### Concrete implementation choice (math-light, code-first)
+
+**Behavior cloning from the planner**:
+
+* Use A* to generate “expert” trajectories on many random maps
+* Train a simple classifier (even a basic model is fine: logistic regression / decision tree / kNN)
+* Replace the planner with the learned policy and compare performance on:
+
+  * “in-distribution” maps (similar to training)
+  * “shifted” maps (more obstacles / different layouts)
+
+### In-class arc (60 minutes)
+
+* 0–10: learning is “compressing experience into a function”
+* 10–25: generate dataset: `(features from state) → (expert action)`
+* 25–45: train model + evaluate accuracy
+* 45–60: deploy inside agent loop + observe failure under shift (with journals)
+
+### Companion book chapter
+
+* “Learning for Agents: Powerful, Not Sovereign”
+* Short RL orientation sidebar (MDP, reward, exploration) **without implementation**
+
+**Terms introduced (limit):** supervised learning, generalization, dataset shift, policy.
+
+---
+
+## Meeting 5 — Reliability Upgrade (turn behavior into software that won’t betray you)
+
+**Central question:** “How do we stop an agent from becoming an expensive ghost story?”
+
+### Core concepts (in-class)
+
+Keep it to **four primitives**, all demonstrated with failures you inject on purpose:
+
+1. **Validation** (schemas / sanity checks on tool outputs)
+2. **Timeouts + retries** (with backoff; simple)
+3. **Idempotency** (don’t double-apply side effects)
+4. **Run journal + replay** (evidence that survives debugging)
+
+Plus the rule that anchors tool safety:
+
+* **Model proposes; system disposes** (policy enforcement outside the model)
+
+### Make the loop explicit: a tiny state machine
+
+You now restructure CourierBot into states like:
+
+* `NAVIGATE → ARRIVE → UNLOCK → VERIFY → REPORT → DONE/FAIL`
+
+### In-class arc (60 minutes)
+
+* 0–10: what “reliability” means for agents (failure taxonomy)
+* 10–30: refactor loop into an explicit workflow/state machine
+* 30–50: add wrappers for tool calls (validate/retry/timeout/idempotency keys)
+* 50–60: run failure-injection scenarios and read the journal like a black box recorder
+
+### Companion book chapter
+
+* “Reliability Primitives That Outlive Frameworks”
+* Mermaid state machine:
+
+```mermaid
+stateDiagram-v2
+  [*] --> Navigate
+  Navigate --> Arrive: at_destination
+  Arrive --> Unlock: door_present
+  Unlock --> Verify: tool_returned
+  Verify --> Report: success
+  Verify --> Fail: cannot_verify
+  Report --> Done
+  Fail --> [*]
+  Done --> [*]
+```
+
+**Terms introduced (limit):** validation, timeout, retry, idempotency, state machine, replayability.
+
+---
+
+## Meeting 6 — Evaluation Upgrade (make it a discipline, not a vibe)
+
+**Central question:** “How do we stay honest about whether the system is good?”
+
+### Core concepts (in-class)
+
+* A **spec** as the root of evaluation:
+
+  * success criteria + constraints + budgets + unacceptable failures
+* Three evaluation modes (shown via one pipeline, not three lectures):
+
+  1. **in-run verification** (did the action actually happen?)
+  2. **offline eval** (fixed test suite + regression gate)
+  3. **online monitoring** (conceptual: SLIs/SLOs, drift)
+* Adversarial cases as tests, not fear:
+
+  * “hostile observation pretending to be a command” (injection-style scenario)
+* Stochasticity hygiene (kept light):
+
+  * fixed seeds + repeated trials when randomness exists
+
+### In-class arc (60 minutes)
+
+* 0–10: write a minimal spec (one page, bullet constraints)
+* 10–35: build offline eval harness (10–30 seeded maps + failure injection)
+* 35–50: define metrics + regression gate (pass/fail threshold)
+* 50–60: final demo run + interpret results from evidence, not vibes
+
+### Hands-on deliverable (final)
+
+* `spec.md`: what “good” means for CourierBot
+* `eval/`: offline tests that run automatically and output a score report
+* a final journal bundle showing at least one adversarial case handled safely
+
+### Companion book chapter
+
+* “Evaluation: The Scientific Method for AI Systems”
+* Mermaid eval pipeline:
+
+```mermaid
+flowchart TD
+  Spec[Spec: success + constraints + budgets] --> Suite[Offline eval suite]
+  Suite --> Metrics[Metrics + thresholds]
+  Metrics --> Gate{Regression gate}
+  Gate -- pass --> Ship[Ship / demo]
+  Gate -- fail --> Fix[Fix + rerun]
+  Ship --> Monitor[Online monitoring signals]
+  Monitor --> Fix
+```
+
+**Terms introduced (limit):** spec, offline eval, regression gate, monitoring, adversarial test.
+
+---
+
+# Appendix: topics intentionally de-emphasized in live hours (still “in the book”)
+
+These remain valuable, but they become meaningful *after* students have seen failures and built the skeleton.
+
+* Classical AI extras: UCS/DFS details, admissibility proofs, complexity bounds
+* Probability extras: Markov property formalism, POMDP notation
+* Learning extras: Bellman equations, deep nets internals, function approximation theory
+* Engineering extras: circuit breakers, concurrency rules, full security architecture
+* “Adult invariants” full list: effect typing, operability, reproducibility discipline, etc. (kept as a checklist + case studies)
+
+---
+
+# Why this revised syllabus is teachable in 6 hours
+
+* Each meeting adds **one capability upgrade** to the same agent.
+* New vocabulary is rationed; students learn by **running, tracing, and journaling**.
+* The “timeless foundations” are preserved, but tied to concrete artifacts:
+
+  * behavior (planning / belief / learned policy)
+  * reliability (contracts / idempotency / journaling)
+  * evaluation (spec / offline suite / regression gates)
+
+This gives you the worldview-shaping goal—without requiring you to smuggle a full CS+stats bootcamp into 360 minutes.
