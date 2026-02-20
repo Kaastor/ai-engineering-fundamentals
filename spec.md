@@ -7,6 +7,7 @@
 * I want a **T-shaped** learning outcome: **depth over breadth**, with deep competence anchored in the agent perspective, plus enough breadth to orient students in the wider AI landscape.
 * The course should emphasize **systems thinking**: intelligence as an **agent loop** and the idea that robust agents require **behavior + reliability + evaluation**, not just a model. 
 * The course should be built around **one running project** (one agent/system) reused across all meetings, with **staged upgrades** each lab (a consistent spine; capabilities added progressively).
+* For course creation, avoid the **dataset creation/collection/labeling** problem: learning demos (if any) should use **synthetic or programmatically generated data** (e.g., simulator output or expert/planner traces), not external real-world datasets.
 * The course format is **6 laboratory meetings**, each **1 hour**, where you can **explain a topic** (scope is lecture/explanation within labs).
 * The intended end state is that students have a **coherent mental map** of core AI concepts—**what they are, where they come from, why they exist, and where they apply**—with agentic reasoning as the organizing principle.
 * For the companion “book”/reading material supporting the course, you require **formal academic tone**, **clear explanations of technical terms**, **Mermaid diagrams**, **analogies**, and **worked + real-world examples**, delivered as **Markdown**.
