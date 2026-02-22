@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "simopsbot-course"
+version = "0.1.0"
+description = "SimOpsBot: a deterministic incident-response agent simulator for a 6-lab Intro to AI Systems course."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [{name = "Course Staff"}]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "mypy>=1.8",
+  "ruff>=0.6",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["learning_compiler*"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unreachable = true
+show_error_codes = true
+pretty = true
+disallow_any_unimported = true
+no_implicit_reexport = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+  "E", "F", "I", "N", "B", "UP", "SIM", "RUF",
+]
+ignore = [
+  "E501",  # line length handled by formatter/editor
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
